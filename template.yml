@@ -1,0 +1,55 @@
+services:
+  db:
+    image: mysql:8.0 # base image for the container, this will pull the image from docker hub
+    container_name: SITENAME_db # create container from image
+    volumes:
+      - db_data:/var/lib/mysql # create a persistant volume to be used by site
+    environment: # environment variable to be used inside docker
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: joomla_db
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpass
+    networks:
+      - SITENAME_network # a bridge network for inter-service communication
+    healthcheck: # health check to make sure a service is running properly before starting another service
+      test:
+        [
+          "CMD",
+          "mysql",
+          "--user=dbuser",
+          "--password=dbpass",
+          "--execute=SHOW DATABASES;",
+        ]
+      timeout: 10s
+      retries: 10
+      interval: 5s
+
+  joomla:
+    image: joomla
+    ports: 
+      - JOOMLA_PORT:80 # expose docker port 80 to host port 8080
+    container_name: SITENAME
+    environment:
+      JOOMLA_DB_HOST: db
+      JOOMLA_DB_USER: dbuser
+      JOOMLA_DB_PASSWORD: dbpass
+      JOOMLA_DB_NAME: joomla_db
+      JOOMLA_SITE_NAME: SITENAME
+      JOOMLA_ADMIN_USER: JOOMLA_USERNAME
+      JOOMLA_ADMIN_USERNAME: JOOMLA_USERNAME
+      JOOMLA_ADMIN_PASSWORD: JOOMLA_PASSWORD
+      JOOMLA_ADMIN_EMAIL: JOOMLA_MAIL
+    volumes:
+      - joomla_data:/var/www/html
+    networks:
+      - SITENAME_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes: # define the persistant volumes to be created by composer
+  joomla_data:
+  db_data:
+
+networks: # define the bridge network to be used by docker
+  SITENAME_network:
