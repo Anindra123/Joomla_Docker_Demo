@@ -27,7 +27,7 @@ services:
   joomla:
     image: joomla
     ports: 
-      - JOOMLA_PORT:80 # expose docker port 80 to host port 8080
+      - JOOMLA_PORT:80 # expose docker port 80 to given host port
     container_name: SITENAME
     environment:
       JOOMLA_DB_HOST: db
@@ -47,7 +47,7 @@ services:
       db:
         condition: service_healthy
 
-volumes: # define the persistant volumes to be created by composer
+volumes: # define the persistant volumes to be created by docker
   joomla_data:
   db_data:
 
