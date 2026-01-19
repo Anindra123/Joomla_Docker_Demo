@@ -10,6 +10,8 @@ NUM_OF_SITES=$(find ./sites -mindepth 1 -type d | wc -l) # find subdirectories a
 BASE_PORT=10010
 PORT=$((BASE_PORT+NUM_OF_SITES)) # increase the number of ports based on the number of sites
 
+export LC_CTYPE=C # so that tr doesn't return illegal characters for mac osx
+
 # check whether passed username
 if [[ -z  "$ADMIN_USERNAME" ]]; then 
     ADMIN_USERNAME='dev'
@@ -51,11 +53,13 @@ if [ -f ./sites/$SITE_NAME/compose.yml ]; then
 else 
     cp ./template.yml ./sites/$SITE_NAME/compose.yml
     # replace template.yml variable value with bash variable value
-    sed -i "s/SITENAME/$SITE_NAME/g" ./sites/$SITE_NAME/compose.yml
-    sed -i "s/JOOMLA_USERNAME/$ADMIN_USERNAME/g" ./sites/$SITE_NAME/compose.yml
-    sed -i "s/JOOMLA_PASSWORD/$ADMIN_PASSWORD/g" ./sites/$SITE_NAME/compose.yml
-    sed -i "s/JOOMLA_MAIL/$ADMIN_EMAIL/g" ./sites/$SITE_NAME/compose.yml
-    sed -i "s/JOOMLA_PORT/$PORT/g" ./sites/$SITE_NAME/compose.yml
+    # added '' after -i which is for in-place so that it works on both
+    # BSD and GNU
+    sed -i'' "s/SITENAME/$SITE_NAME/g" ./sites/$SITE_NAME/compose.yml
+    sed -i'' "s/JOOMLA_USERNAME/$ADMIN_USERNAME/g" ./sites/$SITE_NAME/compose.yml
+    sed -i'' "s/JOOMLA_PASSWORD/$ADMIN_PASSWORD/g" ./sites/$SITE_NAME/compose.yml
+    sed -i'' "s/JOOMLA_MAIL/$ADMIN_EMAIL/g" ./sites/$SITE_NAME/compose.yml
+    sed -i'' "s/JOOMLA_PORT/$PORT/g" ./sites/$SITE_NAME/compose.yml
     cd ./sites/$SITE_NAME
     docker compose up -d
 fi
