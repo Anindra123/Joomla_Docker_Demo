@@ -53,13 +53,12 @@ if [ -f ./sites/$SITE_NAME/compose.yml ]; then
 else 
     cp ./template.yml ./sites/$SITE_NAME/compose.yml
     # replace template.yml variable value with bash variable value
-    # added '' after -i which is for in-place so that it works on both
-    # BSD and GNU
-    sed -i'' "s/SITENAME/$SITE_NAME/g" ./sites/$SITE_NAME/compose.yml
-    sed -i'' "s/JOOMLA_USERNAME/$ADMIN_USERNAME/g" ./sites/$SITE_NAME/compose.yml
-    sed -i'' "s/JOOMLA_PASSWORD/$ADMIN_PASSWORD/g" ./sites/$SITE_NAME/compose.yml
-    sed -i'' "s/JOOMLA_MAIL/$ADMIN_EMAIL/g" ./sites/$SITE_NAME/compose.yml
-    sed -i'' "s/JOOMLA_PORT/$PORT/g" ./sites/$SITE_NAME/compose.yml
+    # added '' after -i which is for in-place so that it works for BSD
+    sed -i '' "s/SITENAME/$SITE_NAME/g" ./sites/$SITE_NAME/compose.yml
+    sed -i '' "s/JOOMLA_USERNAME/$ADMIN_USERNAME/g" ./sites/$SITE_NAME/compose.yml
+    sed -i '' "s/JOOMLA_PASSWORD/$ADMIN_PASSWORD/g" ./sites/$SITE_NAME/compose.yml
+    sed -i '' "s/JOOMLA_MAIL/$ADMIN_EMAIL/g" ./sites/$SITE_NAME/compose.yml
+    sed -i '' "s/JOOMLA_PORT/$PORT/g" ./sites/$SITE_NAME/compose.yml
     cd ./sites/$SITE_NAME
     docker compose up -d
 fi
